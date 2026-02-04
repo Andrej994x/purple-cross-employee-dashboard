@@ -1,11 +1,5 @@
 <template>
-  <Dialog>
-    <DialogTrigger as-child>
-      <Button variant="ghost" size="icon" aria-label="View">
-        <Eye class="h-4 w-4" />
-      </Button>
-    </DialogTrigger>
-
+  <Dialog v-model:open="open">
     <DialogContent class="sm:max-w-lg">
       <DialogHeader>
         <DialogTitle>Employee Profile</DialogTitle>
@@ -36,18 +30,15 @@
       </div>
 
       <DialogFooter>
-        <Button variant="outline">Close</Button>
+        <Button variant="outline" @click="open = false">Close</Button>
       </DialogFooter>
     </DialogContent>
   </Dialog>
 </template>
 
 <script setup lang="ts">
-import { Eye } from "lucide-vue-next";
 import type { EmployeeRowVm } from "../model/employee.types";
-
 import { Button } from "@/components/ui/button";
-
 import {
   Dialog,
   DialogContent,
@@ -55,10 +46,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 
-defineProps<{
+const props = defineProps<{
   employee: EmployeeRowVm;
 }>();
+
+const open = defineModel<boolean>("open", { default: false });
 </script>
