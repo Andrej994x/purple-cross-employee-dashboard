@@ -1,5 +1,8 @@
 <template>
-  <header class="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-background px-4 sm:px-6">
+  <header class="sticky top-0 z-10 flex h-14 items-center gap-3 border-b bg-background px-4 sm:px-6">
+    
+    <SidebarTrigger class="-ml-1 sm:hidden" />
+
     <div class="flex flex-1 items-center gap-2">
       <h1 class="text-lg font-semibold">Employee Management</h1>
     </div>
@@ -10,3 +13,7 @@
     </div>
   </header>
 </template>
+
+<script setup lang="ts">
+import { SidebarTrigger } from "@/components/ui/sidebar";
+</script>
