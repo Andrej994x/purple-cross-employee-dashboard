@@ -53,7 +53,11 @@
               </TableCell>
 
               <TableCell class="text-right">
-                <EmployeeRowActions :employee="emp" />
+                <EmployeeRowActions
+                  :employee="emp"
+                  @edit="$emit('edit', $event)"
+                  @delete="$emit('delete', $event)"
+                />
               </TableCell>
             </TableRow>
           </TableBody>
@@ -207,4 +211,9 @@ const onPageSizeChange = (value: AcceptableValue) => {
   pageSize.value = newSize;
   page.value = 1;
 };
+
+const emit = defineEmits<{
+  (e: "edit", value: EmployeeRowVm): void;
+  (e: "delete", id: string): void;
+}>();
 </script>

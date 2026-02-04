@@ -31,8 +31,18 @@
     </DropdownMenu>
 
     <EmployeeDialogView v-model:open="viewOpen" :employee="employee" />
-    <EmployeeEditDialog v-model:open="editOpen" :employee="employee" />
-    <EmployeeDeleteDialog v-model:open="deleteOpen" :employee="employee" />
+
+    <EmployeeEditDialog
+      v-model:open="editOpen"
+      :employee="employee"
+      @save="emit('edit', $event)"
+    />
+
+    <EmployeeDeleteDialog
+      v-model:open="deleteOpen"
+      :employee="employee"
+      @confirm="emit('delete', employee.id)"
+    />
   </div>
 </template>
 
@@ -55,6 +65,11 @@ import EmployeeEditDialog from "./EmployeeEditDialog.vue";
 import EmployeeDeleteDialog from "./EmployeeDeleteDialog.vue";
 
 defineProps<{ employee: EmployeeRowVm }>();
+
+const emit = defineEmits<{
+  (e: "edit", value: EmployeeRowVm): void;
+  (e: "delete", id: string): void;
+}>();
 
 const viewOpen = ref(false);
 const editOpen = ref(false);

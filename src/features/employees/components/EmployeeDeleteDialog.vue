@@ -6,22 +6,13 @@
       <DialogHeader>
         <DialogTitle>Delete employee?</DialogTitle>
         <DialogDescription>
-          This will remove
-          <span class="font-medium">{{ employee.fullName }}</span> from the
-          list. (UI only for now)
+          This will remove <span class="font-medium">{{ employee.fullName }}</span> from the list.
         </DialogDescription>
       </DialogHeader>
 
       <DialogFooter class="flex-col gap-2 sm:flex-row sm:justify-end">
-        <Button class="w-full sm:w-auto" variant="outline" @click="open = false"
-          >Cancel</Button
-        >
-        <Button
-          class="w-full sm:w-auto"
-          variant="destructive"
-          @click="open = false"
-          >Delete</Button
-        >
+        <Button class="w-full sm:w-auto" variant="outline" @click="open = false">Cancel</Button>
+        <Button class="w-full sm:w-auto" variant="destructive" @click="onConfirm">Delete</Button>
       </DialogFooter>
     </DialogContent>
   </Dialog>
@@ -40,7 +31,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-defineProps<{ employee: EmployeeRowVm }>();
+const props = defineProps<{ employee: EmployeeRowVm }>();
+const emit = defineEmits<{ (e: "confirm"): void }>();
 
 const open = defineModel<boolean>("open", { default: false });
+
+const onConfirm = () => {
+  emit("confirm");
+  open.value = false;
+};
 </script>
