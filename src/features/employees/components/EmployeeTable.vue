@@ -23,16 +23,32 @@
               <TableCell>{{ emp.department }}</TableCell>
 
               <TableCell>
-                <div class="flex flex-col gap-1">
-                  <Badge variant="secondary">{{ emp.employmentStatus }}</Badge>
-                  <span class="text-xs text-muted-foreground">{{ emp.employmentDate }}</span>
+                <div class="flex items-center gap-2">
+                  <Badge
+                    v-if="emp.employmentStatus !== '/'"
+                    variant="secondary"
+                  >
+                    {{ emp.employmentStatus }}
+                  </Badge>
+
+                  <span class="text-xs text-muted-foreground whitespace-nowrap">
+                    {{ emp.employmentDate || "/" }}
+                  </span>
                 </div>
               </TableCell>
 
               <TableCell>
-                <div class="flex flex-col gap-1">
-                  <Badge variant="secondary">{{ emp.terminationStatus }}</Badge>
-                  <span class="text-xs text-muted-foreground">{{ emp.terminationDate || "—" }}</span>
+                <div class="flex items-center gap-2">
+                  <Badge
+                    v-if="emp.terminationStatus !== '/'"
+                    variant="secondary"
+                  >
+                    {{ emp.terminationStatus }}
+                  </Badge>
+
+                  <span class="text-xs text-muted-foreground whitespace-nowrap">
+                    {{ emp.terminationDate || "/" }}
+                  </span>
                 </div>
               </TableCell>
 
@@ -45,24 +61,28 @@
       </div>
     </div>
 
-    
     <div class="md:hidden p-3">
       <EmployeeCardsMobile :rows="pagedRows" />
     </div>
 
-    
     <div
       class="flex flex-col gap-2 border-t px-4 py-3 text-sm sm:flex-row sm:items-center sm:justify-between"
     >
       <div class="text-muted-foreground">
         <template v-if="rows.length === 0">No employees.</template>
-        <template v-else>Showing {{ startLabel }}–{{ endLabel }} of {{ rows.length }}</template>
+        <template v-else
+          >Showing {{ startLabel }}–{{ endLabel }} of
+          {{ rows.length }}</template
+        >
       </div>
 
       <div class="flex items-center gap-2">
         <span class="text-muted-foreground">Rows per page</span>
 
-        <Select :model-value="String(pageSize)" @update:model-value="onPageSizeChange">
+        <Select
+          :model-value="String(pageSize)"
+          @update:model-value="onPageSizeChange"
+        >
           <SelectTrigger class="w-[90px]">
             <SelectValue :placeholder="String(pageSize)" />
           </SelectTrigger>
@@ -97,7 +117,9 @@
           </Button>
         </div>
 
-        <div class="ml-2 text-xs text-muted-foreground">Page {{ page }} / {{ pageCount }}</div>
+        <div class="ml-2 text-xs text-muted-foreground">
+          Page {{ page }} / {{ pageCount }}
+        </div>
       </div>
     </div>
   </div>
@@ -155,15 +177,16 @@ const pagedRows = computed(() => {
   return props.rows.slice(startIndex.value, startIndex.value + pageSize.value);
 });
 
-const startLabel = computed(() => (props.rows.length === 0 ? 0 : startIndex.value + 1));
+const startLabel = computed(() =>
+  props.rows.length === 0 ? 0 : startIndex.value + 1,
+);
 const endLabel = computed(() => endIndex.value);
 
 // if rows change (fetch/filter), keep page in range
 watch(
   () => props.rows.length,
   () => {
-    if (page.value > pageCount.value) page.value = pageCount.value;
-    if (page.value < 1) page.value = 1;
+    page.value = 1;
   },
 );
 

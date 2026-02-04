@@ -6,15 +6,33 @@ type EmployeeJson = {
   fullName: string;
   occupation: string;
   department: string;
-  dateOfEmployment: string;
-  terminationDate: string | null;
+  dateOfEmployment: string; 
+  terminationDate: string | null; 
 };
 
-const sleep = (ms: number) =>
-  new Promise(resolve => setTimeout(resolve, ms));
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 const toRowVm = (e: EmployeeJson): EmployeeRowVm => {
-  const isTerminated = Boolean(e.terminationDate);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const employmentDt = e.dateOfEmployment ? new Date(e.dateOfEmployment) : null;
+  if (employmentDt) employmentDt.setHours(0, 0, 0, 0);
+
+  const terminationDt = e.terminationDate ? new Date(e.terminationDate) : null;
+  if (terminationDt) terminationDt.setHours(0, 0, 0, 0);
+
+  const employmentStatus = !employmentDt
+    ? "/"
+    : employmentDt.getTime() > today.getTime()
+      ? "Employed soon"
+      : "Currently employed";
+
+  const terminationStatus = !terminationDt
+    ? "/"
+    : terminationDt.getTime() > today.getTime()
+      ? "To be terminated"
+      : "Terminated";
 
   return {
     id: e.code,
@@ -22,13 +40,11 @@ const toRowVm = (e: EmployeeJson): EmployeeRowVm => {
     occupation: e.occupation,
     department: e.department,
 
-    employmentDate: e.dateOfEmployment,
-    employmentStatus: isTerminated
-      ? "Previously employed"
-      : "Currently employed",
+    employmentDate: e.dateOfEmployment || "",
+    employmentStatus,
 
     terminationDate: e.terminationDate ?? "",
-    terminationStatus: isTerminated ? "Terminated" : "—",
+    terminationStatus,
   };
 };
 
