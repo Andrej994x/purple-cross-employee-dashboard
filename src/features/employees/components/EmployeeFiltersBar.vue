@@ -3,7 +3,7 @@
     <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
       <div class="grid w-full gap-2 sm:grid-cols-2 lg:max-w-3xl lg:grid-cols-3">
         <Input
-          placeholder="Search (name, occupation...)"
+          placeholder="Search (Full Name)"
           :model-value="search"
           @update:model-value="$emit('update:search', String($event ?? ''))"
         />

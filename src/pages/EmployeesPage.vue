@@ -71,13 +71,12 @@ const filteredRows = computed(() => {
     result = result.filter(r => r.department === department.value);
   }
 
-  // search
+  // search by full name only
   const q = normalize(search.value);
   if (q) {
-    result = result.filter(r => {
-      const hay = normalize(`${r.fullName} ${r.occupation} ${r.department}`);
-      return hay.includes(q);
-    });
+    result = result.filter(r =>
+      normalize(r.fullName).includes(q)
+    );
   }
 
   // sort
@@ -85,17 +84,26 @@ const filteredRows = computed(() => {
     case "name_asc":
       result.sort((a, b) => a.fullName.localeCompare(b.fullName));
       break;
+
     case "name_desc":
       result.sort((a, b) => b.fullName.localeCompare(a.fullName));
       break;
+
     case "employment_new":
-      result.sort((a, b) => (b.employmentDate || "").localeCompare(a.employmentDate || ""));
+      result.sort((a, b) =>
+        (b.employmentDate || "").localeCompare(a.employmentDate || "")
+      );
       break;
+
     case "employment_old":
-      result.sort((a, b) => (a.employmentDate || "").localeCompare(b.employmentDate || ""));
+      result.sort((a, b) =>
+        (a.employmentDate || "").localeCompare(b.employmentDate || "")
+      );
       break;
   }
 
   return result;
 });
+
+
 </script>
