@@ -15,6 +15,6 @@
 </template>
 
 <script setup lang="ts">
-import AppSidebar from "./components/AppSidebar.vue";
-import AppTopbar from "./components/AppTopbar.vue";
+import AppSidebar from "./parts/AppSidebar.vue";
+import AppTopbar from "./parts/AppTopbar.vue";
 </script>
