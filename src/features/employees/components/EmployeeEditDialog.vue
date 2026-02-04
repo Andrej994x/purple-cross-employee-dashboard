@@ -1,6 +1,8 @@
 <template>
   <Dialog v-model:open="open">
-    <DialogContent class="sm:max-w-lg">
+    <DialogContent
+      class="w-[calc(100vw-2rem)] max-w-[520px] rounded-xl p-4 sm:p-6 max-h-[85vh] overflow-auto"
+    >
       <DialogHeader>
         <DialogTitle>Edit Employee</DialogTitle>
         <DialogDescription>Form placeholder (no saving yet)</DialogDescription>
@@ -25,9 +27,11 @@
         </div>
       </div>
 
-      <DialogFooter>
-        <Button variant="outline" @click="open = false">Cancel</Button>
-        <Button @click="open = false">Save</Button>
+      <DialogFooter class="flex-col gap-2 sm:flex-row sm:justify-end">
+        <Button class="w-full sm:w-auto" variant="outline" @click="open = false"
+          >Cancel</Button
+        >
+        <Button class="w-full sm:w-auto" @click="open = false">Save</Button>
       </DialogFooter>
     </DialogContent>
   </Dialog>

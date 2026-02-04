@@ -13,35 +13,24 @@
             </div>
 
             <div class="mt-3 flex flex-wrap gap-2">
-              <Badge variant="secondary">
-                {{ emp.employmentStatus }}
-              </Badge>
-              <Badge variant="secondary">
-                {{ emp.terminationStatus }}
-              </Badge>
+              <Badge variant="secondary">{{ emp.employmentStatus }}</Badge>
+              <Badge variant="secondary">{{ emp.terminationStatus }}</Badge>
             </div>
 
             <div class="mt-3 grid grid-cols-2 gap-2 text-xs text-muted-foreground">
               <div class="rounded-md bg-muted/40 px-2 py-1">
                 <div class="uppercase tracking-wide">Employment</div>
-                <div class="text-foreground">
-                  {{ emp.employmentDate }}
-                </div>
+                <div class="text-foreground">{{ emp.employmentDate }}</div>
               </div>
 
               <div class="rounded-md bg-muted/40 px-2 py-1">
                 <div class="uppercase tracking-wide">Termination</div>
-                <div class="text-foreground">
-                  {{ emp.terminationDate || "—" }}
-                </div>
+                <div class="text-foreground">{{ emp.terminationDate || "—" }}</div>
               </div>
             </div>
           </div>
 
-          <div class="flex items-start gap-1">
-            <Checkbox aria-label="Select row" class="mt-1" />
-            <EmployeeRowActions :employee="emp" />
-          </div>
+          <EmployeeRowActions :employee="emp" />
         </div>
       </CardContent>
     </Card>
@@ -53,7 +42,6 @@ import type { EmployeeRowVm } from "@/features/employees/model/employee.types";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 
 import EmployeeRowActions from "@/features/employees/components/EmployeeRowActions.vue";
 

@@ -5,10 +5,6 @@
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead class="w-[40px]">
-                <Checkbox aria-label="Select all" />
-              </TableHead>
-
               <TableHead>Full Name</TableHead>
               <TableHead>Occupation</TableHead>
               <TableHead>Department</TableHead>
@@ -22,10 +18,6 @@
 
           <TableBody>
             <TableRow v-for="emp in rows" :key="emp.id">
-              <TableCell class="w-[40px]">
-                <Checkbox aria-label="Select row" />
-              </TableCell>
-
               <TableCell class="font-medium">{{ emp.fullName }}</TableCell>
               <TableCell>{{ emp.occupation }}</TableCell>
               <TableCell>{{ emp.department }}</TableCell>
@@ -60,7 +52,7 @@
     <div
       class="flex flex-col gap-2 border-t px-4 py-3 text-sm sm:flex-row sm:items-center sm:justify-between"
     >
-      <div class="text-muted-foreground">0 of {{ rows.length }} row(s) selected.</div>
+      <div class="text-muted-foreground">Showing {{ rows.length }} employee(s).</div>
 
       <div class="flex items-center gap-2">
         <span class="text-muted-foreground">Rows per page</span>
@@ -95,7 +87,6 @@ import type { EmployeeRowVm } from "../model/employee.types";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 
 import {
   Select,
