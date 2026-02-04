@@ -13,7 +13,7 @@
             <SelectValue placeholder="Department" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All</SelectItem>
+            <SelectItem value="all">Departments</SelectItem>
             <SelectItem v-for="d in departments" :key="d" :value="d">{{ d }}</SelectItem>
           </SelectContent>
         </Select>

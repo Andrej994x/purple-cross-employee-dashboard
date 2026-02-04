@@ -55,6 +55,8 @@ import type { AcceptableValue } from "reka-ui";
 
 import type { EmployeeRowVm } from "../model/employee.types";
 import { employeesService } from "@/features/api/employees.mock";
+import { useToast } from "@/components/ui/toast";
+
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -88,6 +90,9 @@ const form = reactive({
   occupation: "",
   department: "",
 });
+
+const { toast } = useToast();
+
 
 watch(
   open,
@@ -136,6 +141,13 @@ const onSave = () => {
   };
 
   emit("save", updated);
+  
+   toast({
+    title: "Employee updated",
+    description: `${updated.fullName} was successfully updated.`,
+  });
   open.value = false;
 };
+
+
 </script>

@@ -56,9 +56,16 @@ onMounted(async () => {
 
 const departments = computed(() => {
   const set = new Set<string>();
-  for (const r of rows.value) set.add(r.department);
-  return ["all", ...Array.from(set).sort((a, b) => a.localeCompare(b))];
+
+  for (const r of rows.value) {
+    if (r.department) {
+      set.add(r.department);
+    }
+  }
+
+  return Array.from(set).sort((a, b) => a.localeCompare(b));
 });
+
 
 const normalize = (s: string) => s.toLowerCase().trim();
 

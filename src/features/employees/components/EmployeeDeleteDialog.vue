@@ -20,6 +20,8 @@
 
 <script setup lang="ts">
 import type { EmployeeRowVm } from "../model/employee.types";
+import { useToast } from "@/components/ui/toast";
+
 
 import { Button } from "@/components/ui/button";
 import {
@@ -35,9 +37,16 @@ const props = defineProps<{ employee: EmployeeRowVm }>();
 const emit = defineEmits<{ (e: "confirm"): void }>();
 
 const open = defineModel<boolean>("open", { default: false });
+  const { toast } = useToast();
+
 
 const onConfirm = () => {
   emit("confirm");
+   toast({
+    title: "Employee deleted",
+    description: `${props.employee.fullName} was removed.`,
+    variant: "destructive",
+  });
   open.value = false;
 };
 </script>
