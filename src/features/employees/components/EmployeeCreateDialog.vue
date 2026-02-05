@@ -25,22 +25,13 @@
           </p>
         </div>
 
-        <div class="grid gap-2">
-          <label class="text-sm text-muted-foreground">Email</label>
-          <Input v-model="email" placeholder="e.g. alan@test.com" />
-          <p v-if="errors.email" class="text-sm text-destructive">
-            {{ errors.email }}
-          </p>
-        </div>
+
 
         <div class="grid gap-2 sm:grid-cols-2">
           <div class="grid gap-2">
             <label class="text-sm text-muted-foreground">Occupation *</label>
 
-            <Select
-              :model-value="occupation"
-              @update:model-value="setOccupation"
-            >
+            <Select :model-value="occupation" @update:model-value="setOccupation">
               <SelectTrigger>
                 <SelectValue placeholder="Select occupation" />
               </SelectTrigger>
@@ -59,10 +50,7 @@
           <div class="grid gap-2">
             <label class="text-sm text-muted-foreground">Department *</label>
 
-            <Select
-              :model-value="department"
-              @update:model-value="setDepartment"
-            >
+            <Select :model-value="department" @update:model-value="setDepartment">
               <SelectTrigger>
                 <SelectValue placeholder="Select department" />
               </SelectTrigger>
@@ -81,16 +69,12 @@
 
         <div class="grid gap-2 sm:grid-cols-2">
           <div class="grid gap-2">
-            <label class="text-sm text-muted-foreground"
-              >Date of Employment</label
-            >
+            <label class="text-sm text-muted-foreground">Date of Employment</label>
             <Input v-model="employmentDate" type="date" />
           </div>
 
           <div class="grid gap-2">
-            <label class="text-sm text-muted-foreground"
-              >Termination Date</label
-            >
+            <label class="text-sm text-muted-foreground">Termination Date</label>
             <Input v-model="terminationDate" type="date" />
             <p v-if="errors.terminationDate" class="text-sm text-destructive">
               {{ errors.terminationDate }}
@@ -99,12 +83,7 @@
         </div>
 
         <DialogFooter class="flex-col gap-2 sm:flex-row sm:justify-end">
-          <Button
-            class="w-full sm:w-auto"
-            type="button"
-            variant="outline"
-            @click="onCancel"
-          >
+          <Button class="w-full sm:w-auto" type="button" variant="outline" @click="onCancel">
             Cancel
           </Button>
           <Button class="w-full sm:w-auto" type="submit">Save</Button>
@@ -157,51 +136,34 @@ const schema = toTypedSchema(
     .object({
       code: z.string().trim().min(1, "Code is required"),
       fullName: z.string().trim().min(1, "Full Name is required"),
-      email: z
-        .string()
-        .trim()
-        .optional()
-        .refine((v) => !v || /\S+@\S+\.\S+/.test(v), {
-          message: "Invalid email",
-        }),
       occupation: z.string().trim().min(1, "Occupation is required"),
       department: z.string().trim().min(1, "Department is required"),
       employmentDate: z.string().optional(),
       terminationDate: z.string().optional(),
     })
     .refine(
-      (v) => {
+      v => {
         if (!v.employmentDate || !v.terminationDate) return true;
-        return (
-          new Date(v.terminationDate).getTime() >=
-          new Date(v.employmentDate).getTime()
-        );
+        return new Date(v.terminationDate).getTime() >= new Date(v.employmentDate).getTime();
       },
-      {
-        message: "Termination date cannot be before employment date",
-        path: ["terminationDate"],
-      },
-    ),
+      { message: "Termination date cannot be before employment date", path: ["terminationDate"] }
+    )
 );
 
-const { errors, defineField, handleSubmit, resetForm, setFieldValue } = useForm(
-  {
-    validationSchema: schema,
-    initialValues: {
-      code: "",
-      fullName: "",
-      email: "",
-      occupation: "",
-      department: "",
-      employmentDate: "",
-      terminationDate: "",
-    },
+const { errors, defineField, handleSubmit, resetForm, setFieldValue } = useForm({
+  validationSchema: schema,
+  initialValues: {
+    code: "",
+    fullName: "",
+    occupation: "",
+    department: "",
+    employmentDate: "",
+    terminationDate: "",
   },
-);
+});
 
 const [code] = defineField("code");
 const [fullName] = defineField("fullName");
-const [email] = defineField("email");
 const [occupation] = defineField("occupation");
 const [department] = defineField("department");
 const [employmentDate] = defineField("employmentDate");
@@ -215,7 +177,7 @@ const setDepartment = (val: AcceptableValue) => {
   setFieldValue("department", String(val ?? ""));
 };
 
-const onSubmit = handleSubmit((v) => {
+const onSubmit = handleSubmit(v => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -239,7 +201,6 @@ const onSubmit = handleSubmit((v) => {
     fullName: v.fullName,
     occupation: v.occupation,
     department: v.department,
-    email: v.email || "",
     employmentDate: empDate,
     employmentStatus,
     terminationDate: termDate,
@@ -254,7 +215,7 @@ const onCancel = () => {
   open.value = false;
 };
 
-watch(open, (isOpen) => {
+watch(open, isOpen => {
   if (isOpen) resetForm();
 });
 </script>
