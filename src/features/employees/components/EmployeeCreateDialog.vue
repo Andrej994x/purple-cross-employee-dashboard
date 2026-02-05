@@ -1,6 +1,8 @@
 <template>
   <Dialog v-model:open="open">
-    <DialogContent class="w-[calc(100vw-2rem)] max-w-[560px] rounded-xl p-4 sm:p-6 max-h-[85vh] overflow-auto">
+    <DialogContent
+      class="w-[calc(100vw-2rem)] max-w-[560px] rounded-xl p-4 sm:p-6 max-h-[85vh] overflow-auto"
+    >
       <DialogHeader>
         <DialogTitle>Create Employee</DialogTitle>
         <DialogDescription>Fill out details and save.</DialogDescription>
@@ -10,20 +12,35 @@
         <div class="grid gap-2">
           <label class="text-sm text-muted-foreground">Code *</label>
           <Input v-model="code" placeholder="e.g. EMP-001" />
-          <p v-if="errors.code" class="text-sm text-destructive">{{ errors.code }}</p>
+          <p v-if="errors.code" class="text-sm text-destructive">
+            {{ errors.code }}
+          </p>
         </div>
 
         <div class="grid gap-2">
           <label class="text-sm text-muted-foreground">Full Name *</label>
           <Input v-model="fullName" placeholder="e.g. Alan Anderson" />
-          <p v-if="errors.fullName" class="text-sm text-destructive">{{ errors.fullName }}</p>
+          <p v-if="errors.fullName" class="text-sm text-destructive">
+            {{ errors.fullName }}
+          </p>
+        </div>
+
+        <div class="grid gap-2">
+          <label class="text-sm text-muted-foreground">Email</label>
+          <Input v-model="email" placeholder="e.g. alan@test.com" />
+          <p v-if="errors.email" class="text-sm text-destructive">
+            {{ errors.email }}
+          </p>
         </div>
 
         <div class="grid gap-2 sm:grid-cols-2">
           <div class="grid gap-2">
             <label class="text-sm text-muted-foreground">Occupation *</label>
 
-            <Select :model-value="occupation" @update:model-value="setOccupation">
+            <Select
+              :model-value="occupation"
+              @update:model-value="setOccupation"
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select occupation" />
               </SelectTrigger>
@@ -34,13 +51,18 @@
               </SelectContent>
             </Select>
 
-            <p v-if="errors.occupation" class="text-sm text-destructive">{{ errors.occupation }}</p>
+            <p v-if="errors.occupation" class="text-sm text-destructive">
+              {{ errors.occupation }}
+            </p>
           </div>
 
           <div class="grid gap-2">
             <label class="text-sm text-muted-foreground">Department *</label>
 
-            <Select :model-value="department" @update:model-value="setDepartment">
+            <Select
+              :model-value="department"
+              @update:model-value="setDepartment"
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select department" />
               </SelectTrigger>
@@ -51,31 +73,41 @@
               </SelectContent>
             </Select>
 
-            <p v-if="errors.department" class="text-sm text-destructive">{{ errors.department }}</p>
+            <p v-if="errors.department" class="text-sm text-destructive">
+              {{ errors.department }}
+            </p>
           </div>
         </div>
 
         <div class="grid gap-2 sm:grid-cols-2">
           <div class="grid gap-2">
-            <label class="text-sm text-muted-foreground">Date of Employment</label>
+            <label class="text-sm text-muted-foreground"
+              >Date of Employment</label
+            >
             <Input v-model="employmentDate" type="date" />
-            <p v-if="errors.employmentDate" class="text-sm text-destructive">{{ errors.employmentDate }}</p>
           </div>
 
           <div class="grid gap-2">
-            <label class="text-sm text-muted-foreground">Termination Date</label>
+            <label class="text-sm text-muted-foreground"
+              >Termination Date</label
+            >
             <Input v-model="terminationDate" type="date" />
-            <p v-if="errors.terminationDate" class="text-sm text-destructive">{{ errors.terminationDate }}</p>
+            <p v-if="errors.terminationDate" class="text-sm text-destructive">
+              {{ errors.terminationDate }}
+            </p>
           </div>
         </div>
 
         <DialogFooter class="flex-col gap-2 sm:flex-row sm:justify-end">
-          <Button class="w-full sm:w-auto" type="button" variant="outline" @click="onCancel">
+          <Button
+            class="w-full sm:w-auto"
+            type="button"
+            variant="outline"
+            @click="onCancel"
+          >
             Cancel
           </Button>
-          <Button class="w-full sm:w-auto" type="submit">
-            Save
-          </Button>
+          <Button class="w-full sm:w-auto" type="submit">Save</Button>
         </DialogFooter>
       </form>
     </DialogContent>
@@ -83,7 +115,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch } from "vue";
+import { watch } from "vue";
 import { z } from "zod";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
@@ -121,30 +153,55 @@ const emit = defineEmits<{
 }>();
 
 const schema = toTypedSchema(
-  z.object({
-    code: z.string().trim().min(1, "Code is required"),
-    fullName: z.string().trim().min(1, "Full Name is required"),
-    occupation: z.string().trim().min(1, "Occupation is required"),
-    department: z.string().trim().min(1, "Department is required"),
-    employmentDate: z.string().optional(),
-    terminationDate: z.string().optional(),
-  })
+  z
+    .object({
+      code: z.string().trim().min(1, "Code is required"),
+      fullName: z.string().trim().min(1, "Full Name is required"),
+      email: z
+        .string()
+        .trim()
+        .optional()
+        .refine((v) => !v || /\S+@\S+\.\S+/.test(v), {
+          message: "Invalid email",
+        }),
+      occupation: z.string().trim().min(1, "Occupation is required"),
+      department: z.string().trim().min(1, "Department is required"),
+      employmentDate: z.string().optional(),
+      terminationDate: z.string().optional(),
+    })
+    .refine(
+      (v) => {
+        if (!v.employmentDate || !v.terminationDate) return true;
+        return (
+          new Date(v.terminationDate).getTime() >=
+          new Date(v.employmentDate).getTime()
+        );
+      },
+      {
+        message: "Termination date cannot be before employment date",
+        path: ["terminationDate"],
+      },
+    ),
 );
 
-const { errors, defineField, handleSubmit, resetForm, setFieldValue, values } = useForm({
-  validationSchema: schema,
-  initialValues: {
-    code: "",
-    fullName: "",
-    occupation: "",
-    department: "",
-    employmentDate: "",
-    terminationDate: "",
+const { errors, defineField, handleSubmit, resetForm, setFieldValue } = useForm(
+  {
+    validationSchema: schema,
+    initialValues: {
+      code: "",
+      fullName: "",
+      email: "",
+      occupation: "",
+      department: "",
+      employmentDate: "",
+      terminationDate: "",
+    },
   },
-});
+);
 
 const [code] = defineField("code");
 const [fullName] = defineField("fullName");
+const [email] = defineField("email");
 const [occupation] = defineField("occupation");
 const [department] = defineField("department");
 const [employmentDate] = defineField("employmentDate");
@@ -158,7 +215,7 @@ const setDepartment = (val: AcceptableValue) => {
   setFieldValue("department", String(val ?? ""));
 };
 
-const onSubmit = handleSubmit(v => {
+const onSubmit = handleSubmit((v) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -166,11 +223,15 @@ const onSubmit = handleSubmit(v => {
   const termDate = v.terminationDate || "";
 
   const employmentStatus = empDate
-    ? (new Date(empDate).getTime() > today.getTime() ? "Employed soon" : "Currently employed")
+    ? new Date(empDate).getTime() > today.getTime()
+      ? "Employed soon"
+      : "Currently employed"
     : "/";
 
   const terminationStatus = termDate
-    ? (new Date(termDate).getTime() > today.getTime() ? "To be terminated" : "Terminated")
+    ? new Date(termDate).getTime() > today.getTime()
+      ? "To be terminated"
+      : "Terminated"
     : "/";
 
   const newRow: EmployeeRowVm = {
@@ -178,6 +239,7 @@ const onSubmit = handleSubmit(v => {
     fullName: v.fullName,
     occupation: v.occupation,
     department: v.department,
+    email: v.email || "",
     employmentDate: empDate,
     employmentStatus,
     terminationDate: termDate,
@@ -192,9 +254,7 @@ const onCancel = () => {
   open.value = false;
 };
 
-watch(open, isOpen => {
-  if (isOpen) {
-    resetForm();
-  }
+watch(open, (isOpen) => {
+  if (isOpen) resetForm();
 });
 </script>

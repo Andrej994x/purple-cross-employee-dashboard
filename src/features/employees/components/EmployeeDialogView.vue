@@ -5,7 +5,7 @@
     >
       <DialogHeader>
         <DialogTitle>Employee Profile</DialogTitle>
-        <DialogDescription>Read-only view (UI only for now)</DialogDescription>
+        <DialogDescription>Read-only view</DialogDescription>
       </DialogHeader>
 
       <div class="grid gap-3 py-2 text-sm">
