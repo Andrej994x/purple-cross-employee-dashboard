@@ -77,12 +77,12 @@ const splitCsvLine = (line: string) => {
   out.push(cur.trim());
   return out;
 };
-
 const normalizeHeader = (h: string) =>
   h
     .replace(/^\uFEFF/, "")
     .trim()
-    .toLowerCase();
+    .toLowerCase()
+    .replace(/\s+/g, ""); 
 
 const val = (obj: Record<string, string>, key: string) =>
   (obj[key] ?? "").trim();
