@@ -1,6 +1,9 @@
 <template>
   <div class="space-y-4">
-    <EmployeesHeader />
+    <EmployeesHeader
+      @imported="onImportEmployees"
+      @export="onExportEmployees"
+    />
 
     <EmployeeFiltersBar
       :search="search"
@@ -66,7 +69,10 @@ const sort = ref<EmployeeSort>("name_asc");
 onMounted(async () => {
   isLoading.value = true;
   try {
-    const [list, m] = await Promise.all([employeesService.list(), employeesService.meta()]);
+    const [list, m] = await Promise.all([
+      employeesService.list(),
+      employeesService.meta(),
+    ]);
     rows.value = list;
     meta.value = m;
   } finally {
@@ -89,8 +95,7 @@ const filteredRows = computed(() => {
   const q = normalize(search.value);
   if (q) result = result.filter(r => normalize(r.fullName).includes(q));
 
-
-    // sort
+  //sort
   switch (sort.value) {
     case "name_asc":
       result.sort((a, b) => a.fullName.localeCompare(b.fullName));
@@ -99,27 +104,33 @@ const filteredRows = computed(() => {
       result.sort((a, b) => b.fullName.localeCompare(a.fullName));
       break;
     case "employment_new":
-      result.sort((a, b) => (b.employmentDate || "").localeCompare(a.employmentDate || ""));
+      result.sort((a, b) =>
+        (b.employmentDate || "").localeCompare(a.employmentDate || "")
+      );
       break;
     case "employment_old":
-      result.sort((a, b) => (a.employmentDate || "").localeCompare(b.employmentDate || ""));
+      result.sort((a, b) =>
+        (a.employmentDate || "").localeCompare(b.employmentDate || "")
+      );
       break;
   }
 
   return result;
 });
 
-// edit in-memory
+// edit
 const onEditEmployee = (updated: EmployeeRowVm) => {
-  rows.value = rows.value.map(r => (r.id === updated.id ? updated : r));
+  rows.value = rows.value.map(r =>
+    r.id === updated.id ? updated : r
+  );
 };
 
-// delete in-memory
+// delete
 const onDeleteEmployee = (id: string) => {
   rows.value = rows.value.filter(r => r.id !== id);
 };
 
-// create in-memory
+// create
 const onCreateEmployee = (newEmployee: EmployeeRowVm) => {
   if (rows.value.some(r => r.id === newEmployee.id)) {
     toast({
@@ -136,5 +147,80 @@ const onCreateEmployee = (newEmployee: EmployeeRowVm) => {
     title: "Employee created",
     description: `${newEmployee.fullName} added successfully.`,
   });
+};
+
+// import
+const onImportEmployees = (payload: { added: EmployeeRowVm[]; skipped: number }) => {
+  const existingIds = new Set(rows.value.map(r => r.id));
+
+  const uniqueToAdd: EmployeeRowVm[] = [];
+  let duplicates = 0;
+
+  for (const emp of payload.added) {
+    if (!emp.id || existingIds.has(emp.id)) {
+      duplicates++;
+      continue;
+    }
+
+    uniqueToAdd.push(emp);
+    existingIds.add(emp.id);
+  }
+
+  if (uniqueToAdd.length > 0) {
+    rows.value = [...uniqueToAdd, ...rows.value];
+  }
+
+  const totalSkipped = payload.skipped + duplicates;
+
+  toast({
+    title: "Import completed",
+    description: `${uniqueToAdd.length} added, ${totalSkipped} skipped.`,
+  });
+};
+
+// export
+const onExportEmployees = () => {
+  if (!rows.value.length) return;
+
+  const headers = [
+    "firstName",
+    "lastName",
+    "email",
+    "title",
+    "department",
+    "employmentDate",
+    "terminationDate",
+  ];
+
+  const csvRows = rows.value.map((r) => {
+    const [firstName, ...rest] = r.fullName.split(" ");
+    const lastName = rest.join(" ");
+
+    return [
+      firstName,
+      lastName,
+      r.email || "",
+      r.occupation || "",
+      r.department || "",
+      r.employmentDate || "",
+      r.terminationDate || "",
+    ]
+      .map((v) => `"${String(v).replace(/"/g, '""')}"`)
+      .join(",");
+  });
+
+  const csvContent =
+    headers.join(",") + "\n" + csvRows.join("\n");
+
+  const blob = new Blob([csvContent], {
+    type: "text/csv;charset=utf-8;",
+  });
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "employees_export.csv";
+  link.click();
+  URL.revokeObjectURL(url);
 };
 </script>
