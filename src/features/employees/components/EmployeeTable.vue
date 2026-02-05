@@ -23,31 +23,40 @@
               <TableCell>{{ emp.department }}</TableCell>
 
               <TableCell>
-                <div class="flex items-center gap-2">
+                <div class="flex flex-col gap-1">
                   <Badge
                     v-if="emp.employmentStatus !== '/'"
-                    variant="secondary"
+                    variant="outline"
+                    :class="[
+                      'w-fit border',
+                      statusBadgeClass(emp.employmentStatus),
+                    ]"
                   >
                     {{ emp.employmentStatus }}
                   </Badge>
 
-                  <span class="text-xs text-muted-foreground whitespace-nowrap">
-                    {{ emp.employmentDate || "/" }}
+                  <span class="text-xs text-muted-foreground">
+                    {{ formatMkDate(emp.employmentDate) }}
                   </span>
                 </div>
               </TableCell>
 
+              <!-- Termination -->
               <TableCell>
-                <div class="flex items-center gap-2">
+                <div class="flex flex-col gap-1">
                   <Badge
                     v-if="emp.terminationStatus !== '/'"
-                    variant="secondary"
+                    variant="outline"
+                    :class="[
+                      'w-fit border',
+                      statusBadgeClass(emp.terminationStatus),
+                    ]"
                   >
                     {{ emp.terminationStatus }}
                   </Badge>
 
-                  <span class="text-xs text-muted-foreground whitespace-nowrap">
-                    {{ emp.terminationDate || "/" }}
+                  <span class="text-xs text-muted-foreground">
+                    {{ formatMkDate(emp.terminationDate) }}
                   </span>
                 </div>
               </TableCell>
@@ -74,10 +83,9 @@
     >
       <div class="text-muted-foreground">
         <template v-if="rows.length === 0">No employees.</template>
-        <template v-else
-          >Showing {{ startLabel }}–{{ endLabel }} of
-          {{ rows.length }}</template
-        >
+        <template v-else>
+          Showing {{ startLabel }}–{{ endLabel }} of {{ rows.length }}
+        </template>
       </div>
 
       <div class="flex items-center gap-2">
@@ -163,7 +171,7 @@ const props = defineProps<{
   rows: EmployeeRowVm[];
 }>();
 
-// default 5 per page on pagination
+// pagination
 const page = ref(1);
 const pageSize = ref(5);
 
@@ -186,7 +194,6 @@ const startLabel = computed(() =>
 );
 const endLabel = computed(() => endIndex.value);
 
-// if rows change (fetch/filter), keep page in range
 watch(
   () => props.rows.length,
   () => {
@@ -216,4 +223,40 @@ const emit = defineEmits<{
   (e: "edit", value: EmployeeRowVm): void;
   (e: "delete", id: string): void;
 }>();
+
+
+
+const formatMkDate = (date?: string) => {
+  if (!date) return "/";
+
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return date;
+
+  const day = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const year = d.getFullYear();
+
+  return `${day}/${month}/${year}`;
+};
+
+const statusBadgeClass = (status?: string) => {
+  if (!status) return "";
+
+  switch (status.toLowerCase()) {
+    case "currently employed":
+      return "bg-green-100 text-green-800 border-green-200";
+
+    case "terminated":
+      return "bg-red-100 text-red-800 border-red-200";
+
+    case "employed soon":
+      return "bg-blue-100 text-blue-800 border-blue-200";
+
+    case "to be terminated":
+      return "bg-yellow-100 text-yellow-800 border-yellow-200";
+
+    default:
+      return "bg-muted text-muted-foreground";
+  }
+};
 </script>
